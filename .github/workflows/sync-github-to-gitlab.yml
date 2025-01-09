@@ -37,13 +37,18 @@ jobs:
       - name: Fetch GitLab branch
         run: git fetch gitlab ${{ matrix.branch }} || true
 
-      # Step 5: Merge changes
-      - name: Merge changes
+      # Step 5: Reconcile Divergent Branches
+      - name: Reconcile Divergent Branches
         run: |
-          git checkout -b ${{ matrix.branch }} gitlab/${{ matrix.branch }} || git checkout ${{ matrix.branch }}
-          git pull gitlab ${{ matrix.branch }} || true
-          git merge --no-ff ${{ matrix.branch }} || true
+          # Check out the current branch
+          git checkout ${{ matrix.branch }}
+          
+          # Merge GitLab branch into GitHub branch
+          git merge gitlab/${{ matrix.branch }} --strategy-option=theirs || true
+
+          # Handle non-fast-forward pushes by force-pushing if needed
+          git push gitlab ${{ matrix.branch }} || git push --force gitlab ${{ matrix.branch }}
 
       # Step 6: Push changes to GitLab
-      - name: Push changes
+      - name: Push Final Changes
         run: git push gitlab ${{ matrix.branch }}
