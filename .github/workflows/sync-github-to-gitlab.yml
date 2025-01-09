@@ -17,11 +17,19 @@ jobs:
         branch: [main, dev, qa, uat]
 
     steps:
-      # Step 1: Checkout GitHub repository
+      # Step 1: Checkout GitHub repository with full history
       - name: Checkout GitHub Repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-      # Step 2: Setup SSH for GitLab
+      # Step 2: Configure Git identity
+      - name: Configure Git Identity
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+
+      # Step 3: Setup SSH for GitLab
       - name: Setup SSH for GitLab
         run: |
           mkdir -p ~/.ssh
@@ -29,15 +37,15 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H gitlab.presidio.com >> ~/.ssh/known_hosts
 
-      # Step 3: Add GitLab remote
+      # Step 4: Add GitLab remote
       - name: Add GitLab remote
         run: git remote add gitlab git@gitlab.presidio.com:jarvis-hai/hai-vscode-plugin.git
 
-      # Step 4: Fetch GitLab branch
+      # Step 5: Fetch GitLab branch
       - name: Fetch GitLab branch
         run: git fetch gitlab ${{ matrix.branch }} || true
 
-      # Step 5: Reconcile Divergent Histories
+      # Step 6: Reconcile Divergent Histories
       - name: Reconcile Divergent Histories
         run: |
           # Check out the current branch
@@ -49,6 +57,6 @@ jobs:
           # Force push to GitLab to reconcile the changes
           git push gitlab ${{ matrix.branch }} || git push --force gitlab ${{ matrix.branch }}
 
-      # Step 6: Push changes to GitLab
+      # Step 7: Push Final Changes
       - name: Push Final Changes
         run: git push gitlab ${{ matrix.branch }}
