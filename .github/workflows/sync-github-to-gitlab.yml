@@ -1,0 +1,23 @@
+name: Sync GitHub to GitLab
+
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to the 'main' branch (or any branch you prefer)
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the GitHub repository
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v2
+
+      # Step 2: Sync to GitLab repository
+      - name: Sync to GitLab repository
+        uses: adambirds/sync-github-to-gitlab-action@v1.1.0
+        with:
+          destination_repository: git@gitlab.presidio.com:jarvis-hai/hai-vscode-plugin.git
+          destination_branch_name: main 
+          destination_ssh_key: ${{ secrets.GITLAB_SSH_KEY }}  
