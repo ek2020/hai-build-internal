@@ -1,0 +1,73 @@
+{
+  "name": "specif_ai",
+  "version": "1.9.5",
+  "description": "AI-powered requirements management and specification platform",
+  "productName": "Specif AI",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "electron-builder install-app-deps",
+    "package:mac": "electron-builder build -m --arm64 --x64",
+    "package:win": "electron-builder build -w --x64 --ia32",
+    "serve:electron": "electron .",
+    "build:ui": "rm -rf ui && cd ../ui && npm run build:dev && cp -r ./dist/ui ../electron/ui/",
+    "build-watch:ui": "rm -rf ui && mkdir ui && cd ../ui && npm run watch:dev",
+    "watch:ui": "concurrently \"npm run build-watch:ui\" \"onchange '../ui/dist/**/*' -- cp -r ../ui/dist/* ./\""
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "author": "presidio",
+  "license": "ISC",
+  "devDependencies": {
+    "@electron/fuses": "^1.8.0",
+    "@electron/rebuild": "^3.6.0",
+    "autoprefixer": "^10.4.20",
+    "electron": "^31.2.1",
+    "electron-builder": "^24.13.3",
+    "electron-reload": "^2.0.0-alpha.1",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.14",
+    "concurrently": "^8.2.2",
+    "onchange": "^7.1.0"
+  },
+  "dependencies": {
+    "@sentry/electron": "^5.3.0",
+    "axios": "^1.7.7",
+    "dotenv": "^16.4.5",
+    "electron-notarize": "^1.2.2",
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-store": "^10.0.0",
+    "express": "^4.21.0"
+  },
+  "build": {
+    "files": "!build-assets${/*}",
+    "appId": "",
+    "extraResources": [
+      ".env",
+      "ui"
+    ],
+    "mac": {
+      "forceCodeSigning": true,
+      "category": "public.app-category.utilities",
+      "icon": "assets/icons/hai_icon.icns",
+      "gatekeeperAssess": false,
+      "notarize": {
+        "teamId": "9NENB68LF9"
+      },
+      "hardenedRuntime": true,
+      "target": "dmg",
+      "entitlements": "build-assets/entitlements.mac.plist",
+      "entitlementsInherit": "build-assets/entitlements.mac.plist"
+    },
+    "dmg": {
+      "sign": false
+    },
+    "win": {
+      "icon": "assets/icons/hai_icon.ico"
+    },
+    "linux": {
+      "icon": "assets/icons/hai_icon.png"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+<div>
+  <input
+    type="file"
+    (change)="onFileSelected($event)"
+    accept=".js,.ts,.tsx,.jsx.html,.css,.json,.xml,.py,.java,.c,.cpp,.cs,.php,.rb,.go,.swift"
+    multiple
+    #fileInput
+    class="hidden"
+  />
+
+  <div class="button-container">
+    <app-button buttonContent="Import from code"
+      theme="secondary"
+      size="sm"
+      rounded="md"
+      (click)="triggerFileInput()"/>
+  </div>
+  <div *ngIf="files.length > 0" class="mt-2">
+    <div class="text-sm font-medium">
+      <span *ngIf="files.length === 1">Selected File</span>
+      <span *ngIf="files.length > 1">Selected Files</span>
+    </div>
+    <div *ngFor="let file of files" class="text-xs">
+      {{ file }}
+    </div>
+  </div>
+</div>

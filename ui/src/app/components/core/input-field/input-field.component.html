@@ -1,0 +1,20 @@
+<div class="my-2">
+  <label
+    [for]="elementId"
+    class="block mb-2 text-sm font-medium text-secondary-500"
+    *ngIf="showLabel"
+  >
+    {{ elementName }}
+    <span class="text-red-500 text-xs" *ngIf="required">*</span>
+  </label>
+  <input
+    [type]="elementType"
+    [id]="elementId"
+    (change)="onChange($event.target)"
+    (keydown.enter)="onKeyDown()"
+    [value]="value"
+    [disabled]="isDisabled"
+    class="border border-secondary-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 disabled:bg-secondary-100"
+    [placeholder]="elementPlaceHolder"
+  />
+</div>

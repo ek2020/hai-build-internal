@@ -1,0 +1,151 @@
+<div
+  *ngIf="documentList$ | async as projectList; else noProjectList"
+  class="container mx-auto px-6 py-2"
+>
+  <div class="mb-4">
+    <div class="flex items-center mt-2 justify-between">
+      <div class="flex items-center">
+        <h1 class="text-normal font-semibold text-gray-700">
+          {{ getDescription(projectList[0].folderName) }}
+        </h1>
+        <app-badge [badgeText]="projectList.length" />
+      </div>
+      <app-button
+        buttonContent="Add"
+        icon="heroPlus"
+        theme="secondary"
+        size="sm"
+        rounded="lg"
+        (click)="navigateToAdd(projectList[0].id, projectList[0].folderName)"
+      />
+    </div>
+    <app-search-input
+      *ngIf="projectList.length > 0"
+      placeholder="Search..."
+      (searchChange)="onSearch($event)"
+    ></app-search-input>
+  </div>
+  <div class="doc-section-height">
+    <ng-container *ngIf="filteredDocumentList$ | async as filteredProjectList">
+      <div
+        *ngIf="projectList.length > 0; else noDocuments"
+        class="grid grid-cols-1 gap-3 sm:gap-4 lg:gap-4 overflow-y-auto"
+      >
+        <ng-container
+          *ngIf="filteredProjectList.length > 0; else noSearchResults"
+        >
+          <div
+            *ngFor="let item of filteredProjectList"
+            class="col-span-1 flex rounded-md shadow-sm relative"
+          >
+            <div
+              class="flex flex-1 items-center justify-between truncate rounded-lg border border-gray-200 bg-white hover:bg-secondary-50 transition-colors"
+            >
+              <div
+                class="flex-1 truncate p-4 text-sm rounded-lg"
+                (click)="navigateToEdit(item)"
+                (keydown.enter)="navigateToEdit(item)"
+                (keydown.space)="navigateToEdit(item); $event.preventDefault()"
+                role="button"
+                tabindex="0"
+              >
+                <a class="font-semibold text-secondary-500">
+                  {{ item.fileName.replace("-base.json", "") }}
+                </a>
+                <h1
+                  class="doc-section__item-title text-base pt-2 pb-1 font-medium truncate pr-[80px]"
+                >
+                  {{ item.content.title }}
+                </h1>
+                <div *ngIf="item.folderName === requirementTypes.PRD">
+                  <ng-container *ngIf="item.content.requirement as requirement">
+                    <p class="text-gray-500 text-wrap">
+                      {{
+                        getTruncatedRequirement(
+                          item.content.requirement
+                            .split("Screens:")[0]
+                            .split("Personas:")[0]
+                        )
+                      }}
+                    </p>
+                    <div *ngIf="item.content.requirement?.includes('Screens:')">
+                      <h4 class="text-sm pt-2 pb-1 font-medium truncate">
+                        Screens:
+                      </h4>
+                      <p class="text-gray-500 text-wrap">
+                        {{
+                          getTruncatedRequirement(
+                            item.content.requirement
+                              .split("Screens:")[1]
+                              .split("Personas:")[0]
+                          )
+                        }}
+                      </p>
+                    </div>
+                    <div
+                      *ngIf="item.content.requirement?.includes('Personas:')"
+                    >
+                      <h4 class="text-sm pt-2 pb-1 font-medium truncate">
+                        Personas:
+                      </h4>
+                      <p class="text-gray-500 text-wrap">
+                        {{
+                          getTruncatedRequirement(
+                            item.content.requirement.split("Personas:").pop()
+                          )
+                        }}
+                      </p>
+                    </div>
+                  </ng-container>
+                </div>
+
+                <p
+                  *ngIf="item.folderName !== requirementTypes.PRD"
+                  class="text-[#666666] text-xs text-wrap leading-4"
+                >
+                  {{ getTruncatedRequirement(item.content.requirement) }}
+                </p>
+              </div>
+              <div class="absolute top-4 right-4 flex space-x-2">
+                <app-button
+                  *ngIf="item.folderName === requirementTypes.PRD"
+                  (click)="navigateToUserStories(item)"
+                  buttonContent="Stories"
+                  theme="secondary_outline"
+                  size="sm"
+                  rounded="lg"
+                />
+                <div
+                  *ngIf="item.folderName === 'BP'"
+                  (click)="navigateToBPFlow(item)"
+                  (keydown.enter)="navigateToBPFlow(item)"
+                  (keydown.space)="navigateToBPFlow(item); $event.preventDefault()"
+                  role="button"
+                  tabindex="0"
+                  class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-transparent bg-white text-gray-400 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                  <ng-icon
+                    class="text-xl"
+                    name="heroArrowsPointingOut"
+                  ></ng-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #noProjectList>
+  <p class="text-center text-gray-500">No project list available.</p>
+</ng-template>
+
+<ng-template #noDocuments>
+  <p class="text-center text-gray-500">No documents available.</p>
+</ng-template>
+
+<ng-template #noSearchResults>
+  <p class="text-center text-gray-500">No search results found.</p>
+</ng-template>

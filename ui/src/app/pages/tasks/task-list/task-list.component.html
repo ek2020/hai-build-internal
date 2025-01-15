@@ -1,0 +1,105 @@
+<div class="container mx-auto px-4 py-2">
+  <div
+    class="grid grid-cols-12 gap-4"
+    *ngIf="selectedUserStory$ | async as selectedUserStory"
+  >
+    <div class="col-span-4 p-4 bg-white rounded-lg shadow">
+      <h1 class="text-lg font-semibold">
+        {{ selectedUserStory.id }}:
+        {{ selectedUserStory?.name }}
+      </h1>
+      <p class="mt-6 text-sm">
+        {{
+          selectedUserStory?.description?.includes("Acceptance Criteria:")
+            ? selectedUserStory.description.split("Acceptance Criteria:")[0]
+            : selectedUserStory?.description
+        }}
+      </p>
+      <div
+        *ngIf="
+          selectedUserStory?.description &&
+          selectedUserStory?.description?.includes('Acceptance Criteria:')
+        "
+      >
+        <h4 class="text-sm mt-4 font-medium">Acceptance Criteria:</h4>
+        <p class="text-sm">
+          {{ selectedUserStory.description.split("Acceptance Criteria:")[1] }}
+        </p>
+      </div>
+    </div>
+    <div class="col-span-8 p-4 bg-white rounded-lg shadow">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center">
+          <h2 class="text-md font-semibold text-gray-600">Tasks</h2>
+          <app-badge [badgeText]="(taskList$ | async)?.length || 0"></app-badge>
+        </div>
+
+        <div class="flex justify-between space-x-4">
+          <ng-container *ngIf="taskList$ | async as taskList">
+            <app-button
+              [buttonContent]="
+                taskList.length > 0 ? 'Regenerate Tasks' : 'Generate Tasks'
+              "
+              theme="secondary"
+              size="sm"
+              rounded="lg"
+              (click)="addExtraContext()"
+            />
+          </ng-container>
+
+          <app-button
+            buttonContent="Add New"
+            theme="primary"
+            size="sm"
+            rounded="lg"
+            (click)="navigateToAddTask()"
+          />
+        </div>
+      </div>
+
+      <app-search-input
+        *ngIf="taskList$ | async as taskList"
+        placeholder="Search..."
+        (searchChange)="onSearch($event)"
+      ></app-search-input>
+
+      <div class="task-list-section-height">
+        <ng-container
+          class="overflow-y-auto"
+          *ngIf="filteredTaskList$ | async as taskList"
+        >
+          <app-list-item
+            [payload]="{
+              description: task.acceptance,
+              name: task.list,
+              id: task.id,
+              jiraTicketId: task.subTaskTicketId,
+            }"
+            [tag]="task.id"
+            *ngFor="let task of taskList"
+            (click)="navigateToEditTask(task.id, selectedUserStory?.id)"
+          >
+            <div class="absolute top-4 right-4">
+              <app-button
+                theme="secondary_outline"
+                size="xs"
+                rounded="lg"
+                [isIconButton]="true"
+                icon="heroDocumentDuplicate"
+                (click)="copyTaskContent($event, task)"
+              />
+            </div>
+          </app-list-item>
+          <div
+            class="flex items-center justify-center"
+            *ngIf="taskList.length === 0"
+          >
+            <h1 class="font-semibold w-full text-center mt-3">
+              No Tasks Available.
+            </h1>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

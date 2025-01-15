@@ -1,0 +1,61 @@
+You are a senior architect tasked with updating existing feature for the provided app from the new user story description provided by client. Below is the description of the app and inputs from client:
+
+App Name:
+{{name}}
+
+App Description:
+{{description}}
+
+Requirement type: Product Requirement
+
+Product Requirement Description:
+{{reqDesc}}
+
+User Story Id:
+{{featureId}}
+
+Existing User Story Description:
+{{existingFeatureDescription}}
+
+Client Request - New User Story Description:
+{{newFeatureDescription}}
+
+FileContent:
+{{fileContent}}
+
+Update the existing feature by incorporating the client's requests and the information from the provided file content. 
+Ensure that the revised feature is clear, concise, and comprehensive.
+
+The feature should be strictly derived from the provided client's request and any information from the provided file content, with no additional or irrelevant information included.
+
+STRICT:
+(!) Output Structure should be a valid JSON: Here is the sample Structure. Follow this exactly. Don't add or change the response JSON:
+
+# RESPONSE FORMAT EXAMPLE
+{
+    "features": [
+        {
+            "id": "<featureId>"
+            "<feature name>": "[description of feature] Acceptance Criteria: [acceptance criteria for the feature as sentences]"
+        }
+    ]
+}
+
+        ...
+Consider this  format to generate user story -
+Ability to <user action> the < feature >
+
+In order to < mention the user need >
+
+As a < the persona or user >
+
+I want the < end goal or objective of the feature >
+
+Special Instructions:
+1. id returned in the response should be same id sent to you (User Story Id -> <featureId> in json response)
+2. Strictly return ONLY ONE OBJECT in the response features array.
+
+STRICT:
+(!) return a list of features ONLY: no other headers, footers, or additional text
+
+Please ensure the feature name and description are clear, concise, and comprehensive. Output only valid JSON. Do not include ```json ``` on start and end of the response.

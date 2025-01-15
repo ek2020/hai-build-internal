@@ -1,0 +1,118 @@
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full">
+  <div
+    [ngClass]="
+      mode === 'add'
+        ? 'grid grid-cols-1 gap-4'
+        : 'grid grid-cols-1 lg:grid-cols-3 gap-4'
+    "
+  >
+    <div
+      [ngClass]="
+        mode === 'add'
+          ? 'bg-white shadow rounded-lg p-6 flex flex-col'
+          : 'bg-white shadow rounded-lg p-6 flex flex-col lg:col-span-2'
+      "
+    >
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-1">
+          <h1 class="text-normal font-semibold mb-4">
+            {{ mode === "add" ? "Add Task" : existingTask.id }}
+          </h1>
+        </div>
+
+        <div
+          *ngIf="mode === 'edit'"
+          class="flex items-center space-x-1 text-3xl"
+        >
+          <div class="relative" style="display: inline-block; cursor: pointer">
+            <app-button
+              [isIconButton]="true"
+              icon="heroTrash"
+              theme="danger"
+              size="sm"
+              rounded="md"
+              (click)="deleteTask()"
+            ></app-button>
+          </div>
+        </div>
+      </div>
+
+      <form
+        [formGroup]="taskForm"
+        (ngSubmit)="mode === 'add' ? addTask() : updateTask()"
+      >
+        <app-input-field
+          [required]="true"
+          elementPlaceHolder="Task Name"
+          elementId="add-task-name"
+          elementName="Task Name"
+          formControlName="list"
+        />
+        <app-error-message [errorControl]="taskForm.get('list')" />
+        <app-textarea-field
+          [required]="true"
+          elementPlaceHolder="Task Description"
+          elementId="add-task-description"
+          elementName="Task Description"
+          formControlName="acceptance"
+        />
+        <app-error-message [errorControl]="taskForm.get('acceptance')" />
+
+        <div class="flex items-center justify-between mt-4">
+          <div class="flex items-center">
+            <input
+              id="task-generate-with-ai"
+              type="checkbox"
+              formControlName="useGenAI"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label
+              for="task-generate-with-ai"
+              class="ml-2 block text-sm text-gray-900"
+              >Expand task with AI</label
+            >
+          </div>
+          <div class="flex items-center">
+            <app-button
+              buttonContent="Update"
+              theme="primary"
+              size="sm"
+              rounded="md"
+              *ngIf="mode === 'edit'"
+              type="submit"
+              [disabled]="taskForm.invalid"
+            />
+            <app-button
+              buttonContent="Add"
+              theme="primary"
+              size="sm"
+              rounded="md"
+              *ngIf="mode === 'add'"
+              type="submit"
+              [disabled]="taskForm.invalid"
+            />
+          </div>
+        </div>
+        <div class="flex items-center justify-start">
+          <app-multi-upload
+            *ngIf="mode === 'add'"
+            (fileContent)="handleFileContent($event)"
+          />
+        </div>
+      </form>
+    </div>
+    <div *ngIf="mode !== 'add'" class="space-y-4 h-full lg:col-span-1">
+      <app-chat
+        chatType="task"
+        [name]="projectMetadata?.name"
+        [description]="projectMetadata?.description"
+        [chatHistory]="chatHistory"
+        [baseContent]="taskForm.getRawValue().acceptance"
+        [prd]="prd.requirement"
+        [userStory]="userStory.description"
+        (getContent)="updateTaskFromChat($event)"
+        (updateChatHistory)="updateChatHistory($event)"
+      ></app-chat>
+    </div>
+  </div>
+</div>

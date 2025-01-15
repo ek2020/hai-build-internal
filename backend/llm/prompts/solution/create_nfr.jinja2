@@ -1,0 +1,21 @@
+You are a requirements analyst tasked with extracting detailed Non-Functional Requirements from the provided app description. Below is the description of the app:
+
+App Name: {{name}}
+App Description: {{description}}
+
+{% include 'nfr.jinja2' %}
+
+Output Structure should be a valid JSON: Here is the sample Structure:
+
+{
+  "nfr": [
+    {
+      "id": "NFR1", "title": <title> ,"requirement": "[Non-Functional Requirements]"
+    },
+    {
+      "id": "NFR2", "title": <title> ,"requirement": "[Non-Functional Requirements]"
+    }...
+  ]
+}
+
+Please ensure the requirements are clear, concise, and comprehensive. Output only valid JSON. Do not include ```json ``` on start and end of the response.

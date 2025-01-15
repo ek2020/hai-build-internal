@@ -1,0 +1,46 @@
+{% set type = addReqtType %}
+{% set format = '{"title": <title>, "requirement": <requirement>}' %}
+
+{% if type == 'BRD' %}
+{% set requirementType = 'Business Requirements' %}
+{% set context = 'brd.jinja2' %}
+{% elif type == 'PRD' %}
+{% set requirementType = 'Product Requirements' %}
+{% set context = 'prd.jinja2' %}
+{% set format = '{"title": <title>, "requirement": "<requirement> Screens: <Screen Description> Personas: <Persona Description>"}' %}
+{% elif type == 'NFR' %}
+{% set requirementType = 'Non-Functional Requirements' %}
+{% set context = 'nfr.jinja2' %}
+{% elif type == 'UIR' %}
+{% set requirementType = 'User Interface Requirements' %}
+{% set context = 'uir.jinja2' %}
+{% endif %}
+
+You are a requirements analyst tasked with extracting detailed {{requirementType}} from the provided app description. Below is the description of the app:
+
+App Name: {{name}}
+App Description: {{description}}
+
+Here is the existing requirement:
+{{existingReqt}}
+
+Client Request:
+{{updatedReqt}}
+
+{% if fileContent %}
+FileContent: {{fileContent}}
+{% endif %}
+
+Context:
+{% include context %}
+
+Based on the above context, update the existing requirement by incorporating the client's requests and the information from the provided file content.
+
+Output Structure should be a valid JSON: Here is the sample Structure:
+{
+  "updated": {{format}}
+}
+
+Updated requirement should be strictly in string format.
+
+Output only valid JSON. Do not include ```json ``` on start and end of the response.

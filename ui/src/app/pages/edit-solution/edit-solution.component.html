@@ -1,0 +1,122 @@
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full">
+  <div
+    [ngClass]="
+      mode === 'add'
+        ? 'grid grid-cols-1 gap-4'
+        : 'grid grid-cols-1 lg:grid-cols-3 gap-4'
+    "
+  >
+    <div
+      [ngClass]="
+        mode === 'add'
+          ? 'bg-white shadow rounded-lg p-6 flex flex-col'
+          : 'bg-white shadow rounded-lg p-6 flex flex-col lg:col-span-2'
+      "
+    >
+      <div class="flex justify-between items-center">
+        <!-- Ensures items are centered vertically in this container -->
+        <div class="flex items-center space-x-1">
+          <h1 class="font-semibold">
+            <!-- Removed mb-4 -->
+            {{
+              mode === "edit"
+                ? fileName.split("-")[0]
+                : getDescription(folderName)
+            }}
+          </h1>
+        </div>
+        <div
+          *ngIf="mode === 'edit'"
+          class="flex items-center space-x-1 text-3xl"
+        >
+          <div class="relative" style="display: inline-block; cursor: pointer">
+            <app-button
+              [isIconButton]="true"
+              icon="heroTrash"
+              theme="danger"
+              size="sm"
+              rounded="md"
+              (click)="deleteFile()"
+            ></app-button>
+          </div>
+        </div>
+      </div>
+
+      <form
+        [formGroup]="requirementForm"
+        (ngSubmit)="mode === 'edit' ? updateRequirement() : addRequirement()"
+      >
+        <app-input-field
+          [required]="true"
+          elementPlaceHolder="Title"
+          elementId="title"
+          elementName="Title"
+          formControlName="title"
+        />
+        <app-error-message [errorControl]="requirementForm.get('title')" />
+
+        <app-textarea-field
+          [required]="true"
+          elementPlaceHolder="Description"
+          elementId="description"
+          elementName="Description"
+          formControlName="content"
+        />
+        <app-error-message [errorControl]="requirementForm.get('content')" />
+
+        <div class="flex items-center justify-between mt-4">
+          <div class="flex-col">
+            <div class="flex items-center mb-4">
+              <input
+                type="checkbox"
+                id="expandAI"
+                formControlName="expandAI"
+                class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 cursor-pointer"
+              />
+              <label for="expandAI" class="ml-2 block text-sm text-gray-900"
+                >Expand with AI</label
+              >
+            </div>
+            <app-multi-upload
+              *ngIf="mode === 'add'"
+              (fileContent)="handleFileContent($event)"
+            ></app-multi-upload>
+          </div>
+          <div class="">
+            <app-button
+              buttonContent="Update"
+              theme="primary"
+              size="sm"
+              rounded="md"
+              *ngIf="mode === 'edit'"
+              type="submit"
+              [disabled]="requirementForm.invalid"
+            />
+            <app-button
+              buttonContent="Add"
+              theme="primary"
+              size="sm"
+              rounded="md"
+              *ngIf="mode === 'add'"
+              type="submit"
+              [disabled]="requirementForm.invalid"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div *ngIf="mode !== 'add'" class="space-y-4 h-full lg:col-span-1">
+      <app-chat
+        chatType="requirement"
+        class="h-[inherit]"
+        [name]="name"
+        [description]="description"
+        [fileName]="fileName"
+        [chatHistory]="chatHistory"
+        [baseContent]="requirementForm.getRawValue().content"
+        (getContent)="appendRequirement($event)"
+        (updateChatHistory)="updateChatHistory($event)"
+      ></app-chat>
+    </div>
+  </div>
+</div>
